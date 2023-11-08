@@ -4,7 +4,7 @@ Jerome Hsing 523301 jhsing24
 
 My creative project is a trip planner.
 
-Rubric:
+Rubric (Checked by Garrett Ramsey):
 | Criteria | Points |
 |----------|--------|
 | Used React.js | 10 |
@@ -14,8 +14,7 @@ Rubric:
 | Logged in users can share trips with others | 10 |
 | Trips can be public (not editable by users that it's not shared with) | 10 |
 | Users can browse public trips and use them as a starting point | 10 |
-| Google Maps integration (Creative portion) | 10 |
-| Yelp integration (Creative portion) | 10 |
+| Creative Portion | 20 |
 | Code is readable and well formatted | 3 |
 | All pages pass the html validator | 2 |
 | Rubric submitted on time | 5 |
