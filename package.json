@@ -1,0 +1,19 @@
+{
+  "name": "creative-project-523301",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cs330-fall-2023/creative-project-523301.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cs330-fall-2023/creative-project-523301/issues"
+  },
+  "homepage": "https://github.com/cs330-fall-2023/creative-project-523301#readme"
+}
