@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 import './TripDetail.css';
+import './main.css'
 
 
 
@@ -106,12 +107,16 @@ const TripDetail = () => {
   if (!trip) {
     return <div>Loading...</div>;
   }
-
+  for(let i = 0; i<trip.collaborators.length; i++){
+    if(trip.collaborators[i].email === trip.creator){
+      trip.collaborators.splice(i, 1)
+    }
+  }
   return (
-  <div className="trip-container">
+  <div className="trip-container body">
   <div className="trip-header">
     <h2>{trip.name}</h2>
-    <h3>Created by {trip.creator.email}</h3>
+    <h3>Created by {trip.creator}</h3>
     {trip.collaborators.length > 0 && (
   <>
     <h4>Shared with:</h4>

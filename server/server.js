@@ -124,7 +124,7 @@ app.post('/api/createTrip', async (req, res) => {
   try {
     const userTripCount = await Trip.countDocuments({ userId: user._id });
     const tripName = `Trip ${userTripCount + 1}`;
-    const newTrip = new Trip({ userId: user._id, name: tripName, locations, collaborators: [] });
+    const newTrip = new Trip({ userId: user._id, name: tripName, locations, collaborators: [user._id] });
     await newTrip.save();
     res.status(201).json({ message: 'Trip created successfully', trip: newTrip });
   } catch (error) {
@@ -183,13 +183,11 @@ app.get('/api/trips/:tripId', async (req, res) => {
     const trip = await Trip.findById(tripId)
                           .populate('userId', 'email token')
                           .populate('collaborators', 'email'); // Populate collaborator's email
-
     if (!trip) {
       return res.status(404).json({ message: 'Trip not found' });
     }
     const creatorToken = trip.userId.token;
-    const user = await User.findById(trip.userId._id)
-    const creator = user.email;
+    const creator = trip.userId.email;
     res.json({ trip: { ...trip.toObject(), creator, creatorToken } });
   } catch (error) {
     console.error('Error fetching trip:', error);
@@ -200,51 +198,46 @@ app.patch('/api/trips/:tripId/removeLocation', async (req, res) => {
   const { tripId } = req.params;
   const token = req.headers.authorization?.split(' ')[1];
 
-  const trip = await Trip.findById(tripId)
-  .populate('userId', 'email token') // Populate creator's email
-  .populate('collaborators', 'email'); // Populate collaborators' emails;
-
-  const creator = await User.findById(trip.userId);
-  const user = await getUserFromToken(token);
-  
-  if (!user) {
-    return res.status(401).json({ message: 'Unauthorized' });
-  }    
-  let flag = false;
-  if(trip.collaborators.length>0){
-    for (let i = 0; i < trip.collaborators.length; i++) {
-      if (trip.collaborators[i]._id.toString() === user._id.toString()) {
-        flag = true;
-        break;
-      }
-    }
-  }
-
-
-  // Check if the requester's token matches the creator's token
-  if (token !== creator.token && !flag) {
-    return res.status(403).json({ message: 'Forbidden' });
-  }
-
-  const { locationIndex } = req.body; // Index of the location to remove
-
   try {
-    const trip = await Trip.findById(tripId);
+    // Fetch the trip along with populated data
+    let trip = await Trip.findById(tripId)
+      .populate('userId', 'email token') // Populate creator's email and token
+      .populate('collaborators', 'email'); // Populate collaborators' emails
+
     if (!trip) {
       return res.status(404).json({ message: 'Trip not found' });
     }
-    const creator = await User.findById(trip.userId);
-    const creatorToken = creator.token
-    trip.locations.splice(locationIndex, 1); 
-    await trip.save();
-    console.log(trip)
 
-    res.json({ message: 'Location removed successfully', trip: { ...trip.toObject(), creator: creator, creatorToken: creatorToken } });
+    const user = await getUserFromToken(token);
+    if (!user) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    // Check if the user is either the creator or a collaborator
+    let isAuthorized = trip.userId._id.equals(user._id);
+    if (!isAuthorized) {
+      isAuthorized = trip.collaborators.some(collaborator => collaborator._id.equals(user._id));
+    }
+
+    if (!isAuthorized) {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+
+    const { locationIndex } = req.body;
+    // Remove the location at the specified index
+    trip.locations.splice(locationIndex, 1); 
+    await trip.save(); 
+    const creator = trip.userId.email;
+    const creatorToken = trip.userId.token;
+
+    // Respond with updated trip data
+    res.json({ message: 'Location removed successfully', trip: { ...trip.toObject(), creator, creatorToken } });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 
 app.patch('/api/trips/:tripId/editName', async (req, res) => {
   const { tripId } = req.params;
@@ -257,17 +250,20 @@ app.patch('/api/trips/:tripId/editName', async (req, res) => {
   }
 
   try {
-    const trip = await Trip.findOne({ _id: tripId, userId: user._id });
+    const trip = await Trip.findOne({ _id: tripId, userId: user._id })
+      .populate('userId', 'email token') // Populate creator's email and token
+      .populate('collaborators', 'email'); // Populate collaborators' emails;
     if (!trip) {
       return res.status(404).json({ message: 'Trip not found or you do not have permission to modify it' });
     }
     const creator = await User.findById(trip.userId);
+    const creatorName = creator.email;
     const creatorToken = creator.token
 
     trip.name = newName;
     await trip.save();
 
-    res.json({ message: 'Trip name updated successfully', trip: { ...trip.toObject(), creator: creator, creatorToken: creatorToken } });
+    res.json({ message: 'Trip name updated successfully', trip: { ...trip.toObject(), creator: creatorName, creatorToken: creatorToken } });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
@@ -311,7 +307,7 @@ app.post('/api/trips/:tripId/addLocation', async (req, res) => {
                           .populate('collaborators', 'email'); // Populate collaborator's email
 
     const flag = trip.collaborators.includes(user._id) || trip.userId._id.toString() === user._id.toString();
-    if (!trip || !flag) {
+    if (!trip && !flag) {
       return res.status(404).json({ message: 'Trip not found or you do not have permission to modify it' });
     }
 

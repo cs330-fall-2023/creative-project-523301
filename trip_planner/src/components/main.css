@@ -1,0 +1,14 @@
+.body {
+    margin: 10px;
+}
+
+.hoverable {
+    border-radius: 10px;
+    padding: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.hoverable:hover {
+    background-color: rgb(192, 192, 192);
+    
+}

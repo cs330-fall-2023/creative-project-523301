@@ -24,10 +24,10 @@ const HomePage = (user) => {
   };
 
   return (
-    <div>
+    <div class="body"v>
       <h1>Trips</h1>
       {trips.map(trip => (
-        <div key={trip._id} onClick={() => goToTripDetails(trip._id)} style={{ cursor: 'pointer' }}>
+        <div key={trip._id} onClick={() => goToTripDetails(trip._id)} class="hoverable" style={{ cursor: 'pointer' }}>
           <h2>{trip.name} by {trip.userEmail}</h2>
           <ul>
             {trip.locations.slice(0, 3).map((location, index) => ( // show only first three locations

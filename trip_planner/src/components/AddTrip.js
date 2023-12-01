@@ -4,6 +4,7 @@ import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import React, {useState, useCallback} from 'react';
 import axios from 'axios'; 
 import { useNavigate } from 'react-router-dom';
+import './main.css';
 
 
 const AddTrip = (user) => {
@@ -73,7 +74,7 @@ const AddTrip = (user) => {
   }, []);
 
   return (
-    <>
+    <div class="body">
       {isLoaded && (
         <GoogleMap
           mapContainerStyle={mapStyles}
@@ -110,7 +111,7 @@ const AddTrip = (user) => {
           </tbody>
         </table>:<h1>Click on the map to show nearby establishments!</h1>}
       
-    </>
+    </div>
   );
 }
 

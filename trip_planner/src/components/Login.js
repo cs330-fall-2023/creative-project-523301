@@ -31,7 +31,7 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div>
+    <div class="body">
       <h2>Login</h2>
       <form>
         <label>Email/Username:</label>
