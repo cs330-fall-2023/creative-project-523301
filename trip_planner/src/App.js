@@ -28,6 +28,7 @@ const App = () => {
 
         <Routes>
           <Route path="/home" exact element={<Home user={user}/>} />
+          <Route path="/" exact element={<Home user={user}/>} />
           <Route
             path="/login"
             element={<Login onLogin={handleLogin} />}

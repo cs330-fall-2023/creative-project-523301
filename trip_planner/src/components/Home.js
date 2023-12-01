@@ -25,7 +25,7 @@ const HomePage = (user) => {
 
   return (
     <div class="body"v>
-      <h1>Trips</h1>
+      <h1>All Trips</h1>
       {trips.map(trip => (
         <div key={trip._id} onClick={() => goToTripDetails(trip._id)} class="hoverable" style={{ cursor: 'pointer' }}>
           <h2>{trip.name} by {trip.userEmail}</h2>
