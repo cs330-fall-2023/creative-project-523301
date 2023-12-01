@@ -1,4 +1,3 @@
-// App.js
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
@@ -6,6 +5,10 @@ import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
+import AddTrip from './components/AddTrip';
+import TripDetail from './components/TripDetail';
+import AddTripLocation from './components/AddTripLocation';
+import { AuthProvider } from './components/AuthContext';
 import './App.css';
 
 const App = () => {
@@ -16,33 +19,34 @@ const App = () => {
     setUser(userData);
   };
 
-  const handleLogout = () => {
-    // Implement logout functionality and reset the user state
-    setUser(null);
-  };
 
   return (
+    <AuthProvider>
     <Router>
       <div>
-        <Header user={user} onLogout={handleLogout} />
+        <Header user={user} setUser={setUser} />
 
         <Routes>
-          <Route path="/" exact component={Home} />
+          <Route path="/home" exact element={<Home user={user}/>} />
           <Route
             path="/login"
             element={<Login onLogin={handleLogin} />}
-            // render={(props) => <Login {...props} onLogin={handleLogin} />}
           />
           <Route path="/register" element={<Register />} />
           <Route
             path="/dashboard"
-            render={(props) => (
-              <Dashboard {...props} user={user} />
-            )}
+            element={<Dashboard user={user} />}
           />
+          <Route
+            path="/addTrip"
+            element={<AddTrip user={user} />}
+          />
+          <Route path="/trips/:tripId" user={user} element={<TripDetail />} />
+          <Route path="/AddTripLocation/:tripId" user={user} element={<AddTripLocation />} />
         </Routes>
       </div>
     </Router>
+    </AuthProvider>
   );
 };
 

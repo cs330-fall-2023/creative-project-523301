@@ -1,17 +1,23 @@
 // Header.js
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-const Header = ({ user, onLogout }) => {
+const Header = ({ user, setUser }) => {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    // Logout logic
+    setUser(null);
+    navigate('/login'); // Redirect to login page after logout
+  };
   return (
     <header>
       <nav>
         <ul>
-          <li><Link to="/">Home</Link></li>
+          <li><Link to="/home">Home</Link></li>
           {user ? (
             <>
               <li><Link to="/dashboard">Dashboard</Link></li>
-              <li><button onClick={onLogout}>Logout</button></li>
+              <li><button onClick={handleLogout}>Logout</button></li>
             </>
           ) : (
             <>

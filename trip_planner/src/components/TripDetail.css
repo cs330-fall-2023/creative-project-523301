@@ -1,0 +1,21 @@
+.trip-container {
+display: flex;
+flex-direction: column;
+width: 60vw;
+}
+
+.location-item {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 10px; /* Adjust spacing between items as needed */
+}
+
+.location-name {
+flex-grow: 1; /* Ensures the name takes up the available space */
+}
+
+
+.collaborator-input {
+    width: 200px;
+}

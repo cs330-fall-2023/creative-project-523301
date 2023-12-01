@@ -1,22 +1,25 @@
 // Register.js
 import React, { useState } from 'react';
-import axios from 'axios'; // Install using: npm install axios
+import axios from 'axios'; 
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleRegister = async () => {
+    console.log("Here");
     try {
       // Send a POST request to the registration endpoint
-      const response = await axios.post('http://localhost:3000/api/register', {
+      const response = await axios.post('http://localhost:5010/api/register', {
         email,
         password,
-        // Add more registration fields as needed
       });
 
       // Handle success (e.g., redirect to login page)
       console.log('Registration successful!', response.data);
+      navigate('/login');
     } catch (error) {
       // Handle error (e.g., display an error message)
       console.error('Registration failed:', error.message);
@@ -27,7 +30,7 @@ const Register = () => {
     <div>
       <h2>Register</h2>
       <form>
-        <label>Email:</label>
+        <label>Email/Username:</label>
         <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         <label>Password:</label>
         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
